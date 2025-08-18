@@ -9,8 +9,8 @@ export const AuthProvider = ({ children }) => {
   const adminUser = {
     id: 1,
     name: "Administrador",
-    email: "admin@email.com",
-    password: "admin123",
+    email: "douglasabnovato.developer@gmail.com",
+    password: "developer123",
     role: "admin"
   };
 

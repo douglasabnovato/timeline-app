@@ -15,7 +15,7 @@ export default function Register() {
 
     const users = JSON.parse(localStorage.getItem("users")) || [];
 
-    if (email === "admin@email.com") {
+    if (email === "douglasabnovato.developer@gmail.com") {
       alert("Esse email é reservado para o administrador.");
       return;
     }
