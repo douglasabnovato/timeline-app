@@ -19,13 +19,11 @@ src/
  │   └─ Register.jsx
  ├─ App.jsx
  └─ index.js
-
-
 ````
 
 ### Fluxo Completo: Login / Registro / Dashboard
 
-
+````markdow
            ┌──────────────────────────┐
            │   Aplicação ReactJS      │
            └─────────────┬────────────┘
@@ -78,7 +76,7 @@ src/
                          │
                    Remove currentUser
                      Redireciona /
-
+````
 
 ## Getting Started with Create React App
 
