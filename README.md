@@ -363,7 +363,7 @@ O projeto está bem estruturado e funcional: roles separados, timeline dinâmica
 - Dashboard dinâmico com formulários e timelines
 - Componentização limpa (TimelineComponent)
 
-#### 🧩 Etapa 1: Aprimorar Persistência com localStorage
+#### 🧩 Etapa 1: Aprimorar Persistência com localStorage - V1
 
 ##### 🔧 Melhorias sugeridas
 
@@ -373,7 +373,7 @@ O projeto está bem estruturado e funcional: roles separados, timeline dinâmica
 4. Sincronizar estado global🔧Se quiser escalar, considerar usar useReducer ou zustand para gerenciar estado com persistência.
 5. Feedback visual🔧Mostrar mensagens de sucesso/erro ao adicionar ou publicar eventos.
 
-#### 🗂️ Etapa 2: Persistência com Arquivo JSON (Simulando Backend)
+#### 🗂️ Etapa 2: Persistência com Arquivo JSON - V2
 
 ##### 🛠️ Tecnologias sugeridas
 
@@ -432,9 +432,8 @@ Vou analisar em duas partes:
 
 Usa currentUser.role para decidir o layout:
 
-Admin → - Adiciona eventos - Mantém timeline própria (events_admin) - Pode publicar eventos para clientes (events_shared)
-
-Viewer → - Só visualiza events_shared. - Persistência feita em localStorage (events_admin, events_shared).
+  - Admin → - Adiciona eventos - Mantém timeline própria (events_admin) - Pode publicar eventos para clientes (events_shared)
+  - Viewer → - Só visualiza events_shared. - Persistência feita em localStorage (events_admin, events_shared).
 
 7. 🚀 App
 
@@ -562,3 +561,11 @@ Viewer → - Só visualiza events_shared. - Persistência feita em localStorage 
   - Criar eventService.js para lidar com eventos
   - Criar userService.js para lidar com usuários
   - Usar useReducer ou zustand para gerenciar estado com persistência automática
+
+### evoluir esse projeto com:
+
+- 🔍 Filtros por tipo, data ou palavra-chave
+- 🗑️ Remoção ou edição de eventos
+- 🧑‍💼 Painel separado para clientes
+- ☁️ Persistência em backend (Firebase, Supabase, etc.)
+- 📱 Versão mobile com layout responsivo
