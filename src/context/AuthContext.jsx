@@ -1,52 +1,37 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { storageService } from "../utils/storageService";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
-
-  const adminUser = {
-    id: 1,
-    name: "Administrador",
-    email: "douglasabnovato.developer@gmail.com",
-    password: "developer123",
-    role: "admin",
-  };
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const users = storageService.get("users") || [];
-    if (!users.find((u) => u.role === "admin")) {
-      storageService.set("users", [adminUser, ...users]);
-    }
-
     const user = storageService.get("currentUser");
     if (user) setCurrentUser(user);
+    setLoading(false);
   }, []);
 
   const login = (user) => {
-    storageService.set("currentUser", user);
     setCurrentUser(user);
+    storageService.set("currentUser", user);
   };
 
   const logout = () => {
-    storageService.remove("currentUser");
     setCurrentUser(null);
+    storageService.remove("currentUser");
   };
 
-  const register = (newUser) => {
-    const users = storageService.get("users") || [];
-    if (users.find((u) => u.email === newUser.email)) {
-      alert("Email já cadastrado!");
-      return;
-    }
-
-    storageService.pushToArray("users", newUser);
-    login(newUser);
+  const register = (user) => {
+    setCurrentUser(user);
+    storageService.set("currentUser", user);
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, logout, register }}>
+    <AuthContext.Provider
+      value={{ currentUser, login, logout, register, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );

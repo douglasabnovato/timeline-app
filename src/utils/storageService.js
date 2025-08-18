@@ -1,5 +1,3 @@
-// utils/storageService.js
-
 export const storageService = {
   get(key) {
     try {

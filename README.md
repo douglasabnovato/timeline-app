@@ -2,9 +2,44 @@
 
 Projeto de timeline da jornada profissional.
 
+## ✅ Recursos Implementados
+
+Recurso	                            Status
+- Login e Registro com validação	✅ Completo
+- Persistência com localStorage	    ✅ Completo
+- Controle de acesso por papel	    ✅ Completo
+- Timeline visual com ícones	    ✅ Completo
+- Formulário de eventos (admin)	    ✅ Completo
+- Logout e redirecionamento	        ✅ Completo
+
 ## Projeto
 
 Vamos desenvolver o nosso projeto de timeline para exibirmos para clientes.
+
+### 📂 Arquivos organizados
+
+- Componentes principais (login.jsx, register.jsx, dashboard.jsx)
+- Contexto de autenticação (AuthContext.jsx)
+- Serviço de armazenamento (storageService.js)
+- Arquivo de rotas (App.jsx)
+- Arquivo de entrada (main.jsx)
+- Estrutura de pastas recomendada
+
+### 📁 Estrutura de Pastas
+
+````markdown
+    src/
+    ├── components/
+    │   ├── Login.jsx
+    │   ├── Register.jsx
+    │   └── Dashboard.jsx
+    ├── context/
+    │   └── AuthContext.jsx
+    ├── utils/
+    │   └── storageService.js
+    ├── App.jsx
+    └── main.jsx
+````
 
 ### Descrição
 
