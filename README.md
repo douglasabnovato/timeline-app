@@ -207,3 +207,87 @@ Uma versão final do projeto completo em React, incluindo:
 - Login.jsx
 - Dashboard.jsx com roles e timelines separadas
 - TimelineComponent.jsx dinâmica
+
+## ✅ Checklist do Projeto React (Timeline App)
+
+1. Criar o projeto
+
+- Abrir o Git Bash
+- Rodar:
+````git bash
+npx create-react-app timeline-app
+cd timeline-app
+````
+- Iniciar repositório git
+````git bash
+git init
+git add .
+git commit -m "Início do projeto React"
+````
+2. Instalar dependências
+
+- Material UI (componentes)
+````git bash
+npm install @mui/material @emotion/react @emotion/styled
+````
+- Material UI Icons
+````git bash
+npm install @mui/icons-material
+````
+- Material UI Lab (Timeline)
+````git bash
+npm install @mui/lab
+````
+- React Router
+````git bash
+npm install react-router-dom
+````
+
+3. Estrutura de pastas no src/
+
+- Criar manualmente estas pastas e arquivos:
+
+````markdown
+src/
+ ├─ components/
+ │   ├─ TimelineComponent.jsx
+ │   └─ PrivateRoute.jsx
+ ├─ context/
+ │   └─ AuthContext.jsx
+ ├─ pages/
+ │   ├─ Dashboard.jsx
+ │   ├─ Login.jsx
+ │   └─ Register.jsx
+ ├─ App.jsx
+ └─ index.js
+````
+4. Implementar os arquivos
+
+- context/AuthContext.jsx → autenticação, admin fixo, login/logout/register.
+- pages/Register.jsx → registro de clientes (não permite admin).
+- pages/Login.jsx → login admin ou clientes.
+- pages/Dashboard.jsx →
+    - Admin → CRUD de eventos + publicar para clientes.
+    - Viewer → apenas ver timeline compartilhada.
+- components/TimelineComponent.jsx → timeline dinâmica com eventos.
+- components/PrivateRoute.jsx → rota protegida por login.
+- App.jsx → configurar BrowserRouter e rotas.
+
+5. Testar fluxo
+
+- Rodar npm start e abrir http://localhost:3000.
+- Criar login com admin fixo (admin@email.com / admin123).
+- Testar registro de cliente → login → ver timeline compartilhada.
+- Testar CRUD de eventos no admin e publicação para clientes.
+- Validar logout → redireciona para login.
+
+6. Versionamento
+
+ Fazer commit inicial com a estrutura pronta:
+
+````git bash
+git add .
+git commit -m "Estrutura base com AuthContext, Pages e Components"
+````
+
+👉 Com esse checklist, no final terá o projeto 100% funcional na versão mock/localStorage.
