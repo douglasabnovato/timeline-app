@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Button,
   Container,
@@ -9,12 +9,19 @@ import {
 } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 import TimelineComponent from "../components/TimelineComponent";
-import { storageService } from "../utils/storageService";
 
 export default function Dashboard() {
   const { currentUser, logout } = useAuth();
-  const [adminEvents, setAdminEvents] = useState([]);
-  const [sharedEvents, setSharedEvents] = useState([]);
+
+  // ✅ Carregar direto do localStorage para evitar sobrescrita
+  const [adminEvents, setAdminEvents] = useState(() => {
+    return JSON.parse(localStorage.getItem("events_admin")) || [];
+  });
+
+  const [sharedEvents, setSharedEvents] = useState(() => {
+    return JSON.parse(localStorage.getItem("events_shared")) || [];
+  });
+
   const [form, setForm] = useState({
     type: "work",
     title: "",
@@ -22,17 +29,13 @@ export default function Dashboard() {
     date: "",
   });
 
+  // ✅ Persistência automática sempre que o estado mudar
   useEffect(() => {
-    setAdminEvents(storageService.get("events_admin") || []);
-    setSharedEvents(storageService.get("events_shared") || []);
-  }, [currentUser]);
-
-  useEffect(() => {
-    storageService.set("events_admin", adminEvents);
+    localStorage.setItem("events_admin", JSON.stringify(adminEvents));
   }, [adminEvents]);
 
   useEffect(() => {
-    storageService.set("events_shared", sharedEvents);
+    localStorage.setItem("events_shared", JSON.stringify(sharedEvents));
   }, [sharedEvents]);
 
   const handleChange = (e) =>
@@ -40,37 +43,14 @@ export default function Dashboard() {
 
   const handleAddEvent = (e) => {
     e.preventDefault();
-
-    if (!form.title || !form.description || !form.date) {
-      alert("Preencha todos os campos!");
-      return;
-    }
-
-    const duplicate = adminEvents.find(
-      (ev) => ev.title === form.title && ev.date === form.date
-    );
-
-    if (duplicate) {
-      alert("Evento já existe com esse título e data!");
-      return;
-    }
-
     const newEvent = { ...form, id: Date.now() };
     setAdminEvents([...adminEvents, newEvent]);
     setForm({ type: "work", title: "", description: "", date: "" });
   };
 
-  const togglePublishToClients = (event) => {
-    const alreadyShared = sharedEvents.find((ev) => ev.id === event.id);
-
-    if (alreadyShared) {
-      setSharedEvents(sharedEvents.filter((ev) => ev.id !== event.id));
-    } else {
-      setSharedEvents([...sharedEvents, { ...event }]);
-    }
+  const handlePublishToClients = (event) => {
+    setSharedEvents([...sharedEvents, { ...event }]);
   };
-
-  const isPublished = (eventId) => sharedEvents.some((ev) => ev.id === eventId);
 
   return (
     <Container>
@@ -83,6 +63,8 @@ export default function Dashboard() {
           <Typography variant="h6" gutterBottom>
             Adicionar Evento (Admin)
           </Typography>
+
+          {/* Formulário de criação de evento */}
           <Box
             component="form"
             onSubmit={handleAddEvent}
@@ -139,11 +121,10 @@ export default function Dashboard() {
             <Button
               key={ev.id}
               sx={{ mr: 1, mt: 1 }}
-              variant={isPublished(ev.id) ? "contained" : "outlined"}
-              color={isPublished(ev.id) ? "success" : "primary"}
-              onClick={() => togglePublishToClients(ev)}
+              variant="outlined"
+              onClick={() => handlePublishToClients(ev)}
             >
-              {isPublished(ev.id) ? "Publicado: " : "Publicar: "} {ev.title}
+              Publicar: {ev.title}
             </Button>
           ))}
         </>

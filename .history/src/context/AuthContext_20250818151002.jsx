@@ -1,47 +1,43 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { storageService } from "../utils/storageService";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
 
+  // Usuário admin fixo (alterar email e senha aqui)
   const adminUser = {
     id: 1,
     name: "Administrador",
     email: "douglasabnovato.developer@gmail.com",
     password: "developer123",
-    role: "admin",
+    role: "admin"
   };
 
   useEffect(() => {
-    const users = storageService.get("users") || [];
+    const users = JSON.parse(localStorage.getItem("users")) || [];
     if (!users.find((u) => u.role === "admin")) {
-      storageService.set("users", [adminUser, ...users]);
+      localStorage.setItem("users", JSON.stringify([adminUser, ...users]));
     }
 
-    const user = storageService.get("currentUser");
+    const user = JSON.parse(localStorage.getItem("currentUser"));
     if (user) setCurrentUser(user);
   }, []);
 
   const login = (user) => {
-    storageService.set("currentUser", user);
+    localStorage.setItem("currentUser", JSON.stringify(user));
     setCurrentUser(user);
   };
 
   const logout = () => {
-    storageService.remove("currentUser");
+    localStorage.removeItem("currentUser");
     setCurrentUser(null);
   };
 
   const register = (newUser) => {
-    const users = storageService.get("users") || [];
-    if (users.find((u) => u.email === newUser.email)) {
-      alert("Email já cadastrado!");
-      return;
-    }
-
-    storageService.pushToArray("users", newUser);
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    users.push(newUser);
+    localStorage.setItem("users", JSON.stringify(users));
     login(newUser);
   };
 

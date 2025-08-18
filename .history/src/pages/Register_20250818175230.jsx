@@ -30,7 +30,7 @@ export default function Register() {
       name,
       email,
       password,
-      role: "viewer",
+      role: "viewer"
     };
 
     register(newUser);
@@ -39,34 +39,19 @@ export default function Register() {
 
   return (
     <Container maxWidth="sm">
-      <Typography variant="h4" gutterBottom>
-        Registrar
-      </Typography>
+      <Typography variant="h4" gutterBottom>Registrar</Typography>
       <form onSubmit={handleSubmit}>
-        <TextField
-          fullWidth
-          label="Nome"
-          margin="normal"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
+        <TextField 
+          fullWidth label="Nome" margin="normal" 
+          value={name} onChange={(e) => setName(e.target.value)} required
         />
-        <TextField
-          fullWidth
-          label="Email"
-          margin="normal"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
+        <TextField 
+          fullWidth label="Email" margin="normal" 
+          value={email} onChange={(e) => setEmail(e.target.value)} required
         />
-        <TextField
-          fullWidth
-          label="Senha"
-          type="password"
-          margin="normal"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
+        <TextField 
+          fullWidth label="Senha" type="password" margin="normal" 
+          value={password} onChange={(e) => setPassword(e.target.value)} required
         />
         <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 }}>
           Registrar

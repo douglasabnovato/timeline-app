@@ -14,9 +14,7 @@ export default function Login() {
     e.preventDefault();
 
     const users = storageService.get("users") || [];
-    const user = users.find(
-      (u) => u.email === email && u.password === password
-    );
+    const user = users.find(u => u.email === email && u.password === password);
 
     if (user) {
       login(user);
@@ -28,26 +26,15 @@ export default function Login() {
 
   return (
     <Container maxWidth="sm">
-      <Typography variant="h4" gutterBottom>
-        Login
-      </Typography>
+      <Typography variant="h4" gutterBottom>Login</Typography>
       <form onSubmit={handleSubmit}>
         <TextField
-          fullWidth
-          label="Email"
-          margin="normal"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
+          fullWidth label="Email" margin="normal"
+          value={email} onChange={(e) => setEmail(e.target.value)} required
         />
         <TextField
-          fullWidth
-          label="Senha"
-          type="password"
-          margin="normal"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
+          fullWidth label="Senha" type="password" margin="normal"
+          value={password} onChange={(e) => setPassword(e.target.value)} required
         />
         <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 }}>
           Entrar

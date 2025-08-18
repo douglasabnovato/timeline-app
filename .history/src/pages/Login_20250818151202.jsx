@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Button, TextField, Container, Typography } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
-import { storageService } from "../utils/storageService";
 
 export default function Login() {
   const { login } = useAuth();
@@ -12,12 +11,8 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    const users = storageService.get("users") || [];
-    const user = users.find(
-      (u) => u.email === email && u.password === password
-    );
-
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const user = users.find(u => u.email === email && u.password === password);
     if (user) {
       login(user);
       navigate("/dashboard");
@@ -28,26 +23,15 @@ export default function Login() {
 
   return (
     <Container maxWidth="sm">
-      <Typography variant="h4" gutterBottom>
-        Login
-      </Typography>
+      <Typography variant="h4" gutterBottom>Login</Typography>
       <form onSubmit={handleSubmit}>
         <TextField
-          fullWidth
-          label="Email"
-          margin="normal"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
+          fullWidth label="Email" margin="normal"
+          value={email} onChange={(e) => setEmail(e.target.value)} required
         />
         <TextField
-          fullWidth
-          label="Senha"
-          type="password"
-          margin="normal"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
+          fullWidth label="Senha" type="password" margin="normal"
+          value={password} onChange={(e) => setPassword(e.target.value)} required
         />
         <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 }}>
           Entrar

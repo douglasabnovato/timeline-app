@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
     name: "Administrador",
     email: "douglasabnovato.developer@gmail.com",
     password: "developer123",
-    role: "admin",
+    role: "admin"
   };
 
   useEffect(() => {

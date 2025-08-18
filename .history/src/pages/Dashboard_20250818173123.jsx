@@ -46,8 +46,8 @@ export default function Dashboard() {
       return;
     }
 
-    const duplicate = adminEvents.find(
-      (ev) => ev.title === form.title && ev.date === form.date
+    const duplicate = adminEvents.find(ev =>
+      ev.title === form.title && ev.date === form.date
     );
 
     if (duplicate) {

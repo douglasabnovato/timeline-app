@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 import TimelineComponent from "../components/TimelineComponent";
-import { storageService } from "../utils/storageService";
 
 export default function Dashboard() {
   const { currentUser, logout } = useAuth();
@@ -22,55 +21,48 @@ export default function Dashboard() {
     date: "",
   });
 
+  // Carrega eventos salvos ao iniciar
   useEffect(() => {
-    setAdminEvents(storageService.get("events_admin") || []);
-    setSharedEvents(storageService.get("events_shared") || []);
-  }, [currentUser]);
+    const adminSaved = JSON.parse(localStorage.getItem("events_admin")) || [];
+    const sharedSaved = JSON.parse(localStorage.getItem("events_shared")) || [];
+    setAdminEvents(adminSaved);
+    setSharedEvents(sharedSaved);
+  }, []);
 
+  // Persiste adminEvents
   useEffect(() => {
-    storageService.set("events_admin", adminEvents);
+    localStorage.setItem("events_admin", JSON.stringify(adminEvents));
   }, [adminEvents]);
 
+  // Persiste sharedEvents
   useEffect(() => {
-    storageService.set("events_shared", sharedEvents);
+    localStorage.setItem("events_shared", JSON.stringify(sharedEvents));
   }, [sharedEvents]);
 
+  // Atualiza formulário
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
+  // Adiciona novo evento
   const handleAddEvent = (e) => {
     e.preventDefault();
-
-    if (!form.title || !form.description || !form.date) {
-      alert("Preencha todos os campos!");
-      return;
-    }
-
-    const duplicate = adminEvents.find(
-      (ev) => ev.title === form.title && ev.date === form.date
-    );
-
-    if (duplicate) {
-      alert("Evento já existe com esse título e data!");
-      return;
-    }
-
     const newEvent = { ...form, id: Date.now() };
     setAdminEvents([...adminEvents, newEvent]);
     setForm({ type: "work", title: "", description: "", date: "" });
   };
 
-  const togglePublishToClients = (event) => {
-    const alreadyShared = sharedEvents.find((ev) => ev.id === event.id);
+  // Publica ou remove publicação
+  const handleTogglePublish = (event) => {
+    const exists = sharedEvents.find((ev) => ev.id === event.id);
 
-    if (alreadyShared) {
+    if (exists) {
+      // remover se já publicado
       setSharedEvents(sharedEvents.filter((ev) => ev.id !== event.id));
     } else {
-      setSharedEvents([...sharedEvents, { ...event }]);
+      // adicionar se ainda não publicado
+      setSharedEvents([...sharedEvents, event]);
     }
   };
-
-  const isPublished = (eventId) => sharedEvents.some((ev) => ev.id === eventId);
 
   return (
     <Container>
@@ -80,13 +72,19 @@ export default function Dashboard() {
 
       {currentUser?.role === "admin" ? (
         <>
+          {/* Formulário para adicionar evento */}
           <Typography variant="h6" gutterBottom>
             Adicionar Evento (Admin)
           </Typography>
           <Box
             component="form"
             onSubmit={handleAddEvent}
-            sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: 3 }}
+            sx={{
+              display: "flex",
+              gap: 2,
+              flexWrap: "wrap",
+              mb: 3,
+            }}
           >
             <TextField
               select
@@ -127,28 +125,36 @@ export default function Dashboard() {
             </Button>
           </Box>
 
+          {/* Timeline do administrador */}
           <Typography variant="h6" gutterBottom>
             Minha Timeline (Admin)
           </Typography>
           <TimelineComponent events={adminEvents} />
 
+          {/* Publicar eventos */}
           <Typography variant="h6" sx={{ mt: 3 }}>
             Publicar Eventos para Clientes
           </Typography>
-          {adminEvents.map((ev) => (
-            <Button
-              key={ev.id}
-              sx={{ mr: 1, mt: 1 }}
-              variant={isPublished(ev.id) ? "contained" : "outlined"}
-              color={isPublished(ev.id) ? "success" : "primary"}
-              onClick={() => togglePublishToClients(ev)}
-            >
-              {isPublished(ev.id) ? "Publicado: " : "Publicar: "} {ev.title}
-            </Button>
-          ))}
+          {adminEvents.map((ev) => {
+            const isPublished = sharedEvents.some(
+              (shared) => shared.id === ev.id
+            );
+            return (
+              <Button
+                key={ev.id}
+                sx={{ mr: 1, mt: 1 }}
+                variant={isPublished ? "contained" : "outlined"}
+                color={isPublished ? "success" : "primary"}
+                onClick={() => handleTogglePublish(ev)}
+              >
+                {isPublished ? `Publicado: ${ev.title}` : `Publicar: ${ev.title}`}
+              </Button>
+            );
+          })}
         </>
       ) : (
         <>
+          {/* Timeline compartilhada */}
           <Typography variant="h6" gutterBottom>
             Timeline Compartilhada (Somente Visualização)
           </Typography>
@@ -156,7 +162,13 @@ export default function Dashboard() {
         </>
       )}
 
-      <Button variant="outlined" color="error" onClick={logout} sx={{ mt: 3 }}>
+      {/* Botão de sair */}
+      <Button
+        variant="outlined"
+        color="error"
+        onClick={logout}
+        sx={{ mt: 3 }}
+      >
         Sair
       </Button>
     </Container>

@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 import TimelineComponent from "../components/TimelineComponent";
-import { storageService } from "../utils/storageService";
 
 export default function Dashboard() {
   const { currentUser, logout } = useAuth();
@@ -22,17 +21,22 @@ export default function Dashboard() {
     date: "",
   });
 
+  // 🔹 Carrega eventos salvos ao iniciar ou quando o usuário troca
   useEffect(() => {
-    setAdminEvents(storageService.get("events_admin") || []);
-    setSharedEvents(storageService.get("events_shared") || []);
+    const adminSaved = JSON.parse(localStorage.getItem("events_admin")) || [];
+    const sharedSaved = JSON.parse(localStorage.getItem("events_shared")) || [];
+    setAdminEvents(adminSaved);
+    setSharedEvents(sharedSaved);
   }, [currentUser]);
 
+  // 🔹 Salva eventos do admin no localStorage
   useEffect(() => {
-    storageService.set("events_admin", adminEvents);
+    localStorage.setItem("events_admin", JSON.stringify(adminEvents));
   }, [adminEvents]);
 
+  // 🔹 Salva eventos compartilhados no localStorage
   useEffect(() => {
-    storageService.set("events_shared", sharedEvents);
+    localStorage.setItem("events_shared", JSON.stringify(sharedEvents));
   }, [sharedEvents]);
 
   const handleChange = (e) =>
@@ -40,37 +44,27 @@ export default function Dashboard() {
 
   const handleAddEvent = (e) => {
     e.preventDefault();
-
-    if (!form.title || !form.description || !form.date) {
-      alert("Preencha todos os campos!");
-      return;
-    }
-
-    const duplicate = adminEvents.find(
-      (ev) => ev.title === form.title && ev.date === form.date
-    );
-
-    if (duplicate) {
-      alert("Evento já existe com esse título e data!");
-      return;
-    }
-
     const newEvent = { ...form, id: Date.now() };
     setAdminEvents([...adminEvents, newEvent]);
     setForm({ type: "work", title: "", description: "", date: "" });
   };
 
+  // 🔹 Publicar ou remover evento compartilhado
   const togglePublishToClients = (event) => {
     const alreadyShared = sharedEvents.find((ev) => ev.id === event.id);
 
     if (alreadyShared) {
+      // Remover
       setSharedEvents(sharedEvents.filter((ev) => ev.id !== event.id));
     } else {
+      // Adicionar
       setSharedEvents([...sharedEvents, { ...event }]);
     }
   };
 
-  const isPublished = (eventId) => sharedEvents.some((ev) => ev.id === eventId);
+  // 🔹 Verifica se evento está publicado
+  const isPublished = (eventId) =>
+    sharedEvents.some((ev) => ev.id === eventId);
 
   return (
     <Container>
@@ -80,6 +74,7 @@ export default function Dashboard() {
 
       {currentUser?.role === "admin" ? (
         <>
+          {/* 🔹 Formulário de adicionar evento */}
           <Typography variant="h6" gutterBottom>
             Adicionar Evento (Admin)
           </Typography>
@@ -127,11 +122,13 @@ export default function Dashboard() {
             </Button>
           </Box>
 
+          {/* 🔹 Timeline do Admin */}
           <Typography variant="h6" gutterBottom>
             Minha Timeline (Admin)
           </Typography>
           <TimelineComponent events={adminEvents} />
 
+          {/* 🔹 Botões de publicação */}
           <Typography variant="h6" sx={{ mt: 3 }}>
             Publicar Eventos para Clientes
           </Typography>
@@ -149,6 +146,7 @@ export default function Dashboard() {
         </>
       ) : (
         <>
+          {/* 🔹 Timeline do Cliente */}
           <Typography variant="h6" gutterBottom>
             Timeline Compartilhada (Somente Visualização)
           </Typography>
@@ -156,7 +154,13 @@ export default function Dashboard() {
         </>
       )}
 
-      <Button variant="outlined" color="error" onClick={logout} sx={{ mt: 3 }}>
+      {/* 🔹 Botão Sair */}
+      <Button
+        variant="outlined"
+        color="error"
+        onClick={logout}
+        sx={{ mt: 3 }}
+      >
         Sair
       </Button>
     </Container>
