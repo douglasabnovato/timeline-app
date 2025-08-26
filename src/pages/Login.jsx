@@ -1,61 +1,54 @@
 import { useState } from "react";
-import { Button, TextField, Container, Typography } from "@mui/material";
+import { Container, Typography, TextField, Button, Alert } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
-import { storageService } from "../utils/storageService";
 
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const users = storageService.get("users") || [];
-    const user = users.find(
-      (u) => u.email === email && u.password === password
-    );
-
-    if (user) {
-      login(user);
+    try {
+      await login(email, password);
       navigate("/dashboard");
-    } else {
-      alert("Email ou senha incorretos!");
+    } catch (err) {
+      setError(err.message);
     }
   };
 
   return (
-    <Container maxWidth="sm">
+    <Container sx={{ mt: 5 }}>
       <Typography variant="h4" gutterBottom>
         Login
       </Typography>
+      {error && <Alert severity="error">{error}</Alert>}
       <form onSubmit={handleSubmit}>
         <TextField
+          label="E-mail"
+          type="email"
           fullWidth
-          label="Email"
           margin="normal"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
         <TextField
-          fullWidth
           label="Senha"
           type="password"
+          fullWidth
           margin="normal"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 }}>
+        <Button type="submit" variant="contained" sx={{ mt: 2 }}>
           Entrar
         </Button>
       </form>
-      <Typography variant="body2" sx={{ mt: 2 }}>
-        Não tem conta? <Link to="/register">Registrar</Link>
-      </Typography>
     </Container>
   );
 }

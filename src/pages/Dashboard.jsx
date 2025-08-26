@@ -1,223 +1,168 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Container,
   Typography,
-  Button,
   TextField,
+  Button,
+  Select,
   MenuItem,
-  Switch,
-  FormControlLabel,
-  Grid,
-  Divider,
+  Box,
+  Paper,
+  IconButton,
 } from "@mui/material";
-import TimelineComponent from "../components/TimelineComponent";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import {
+  getEvents,
+  createEvent,
+  updateEvent,
+  deleteEvent,
+} from "../services/eventService";
 import { useAuth } from "../context/AuthContext";
-import { storageService } from "../utils/storageService";
-import { useNavigate } from "react-router-dom";
+import TimelineComponent from "../components/TimelineComponent";
 
 export default function Dashboard() {
   const { currentUser, logout } = useAuth();
-  const navigate = useNavigate();
-  const [allEvents, setAllEvents] = useState([]);
-  const [sharedEvents, setSharedEvents] = useState([]);
-  const [newEvent, setNewEvent] = useState({
+  const [events, setEvents] = useState([]);
+  const [form, setForm] = useState({
     title: "",
     description: "",
     date: "",
     type: "event",
-    public: true,
   });
+  const [editingId, setEditingId] = useState(null);
 
-  // Carrega todos os eventos e os compartilhados
+  // 🔹 Carregar eventos
   useEffect(() => {
-    const storedEvents = storageService.get("timelineEvents") || [];
-    const shared = storageService.get("events_shared") || [];
-    setAllEvents(storedEvents);
-    setSharedEvents(shared);
-  }, [currentUser]);
+    const fetchData = async () => {
+      const data = await getEvents();
+      // filtra eventos do usuário
+      setEvents(data.filter((e) => e.ownerId === currentUser.id));
+    };
+    fetchData();
+  }, [currentUser.id]);
 
-  // Define eventos visíveis com base no papel
-  const visibleEvents = currentUser.role === "admin" ? allEvents : sharedEvents;
-
-  const handleAddEvent = () => {
-    if (!newEvent.title || !newEvent.date) {
-      alert("Preencha os campos obrigatórios.");
-      return;
-    }
-
-    const updatedEvents = [...allEvents, newEvent];
-    storageService.set("timelineEvents", updatedEvents);
-    setAllEvents(updatedEvents);
-    setNewEvent({
-      title: "",
-      description: "",
-      date: "",
-      type: "event",
-      public: true,
-    });
-
-    if (newEvent.public) {
-      const updatedShared = [...sharedEvents, newEvent];
-      storageService.set("events_shared", updatedShared);
-      setSharedEvents(updatedShared);
-    }
+  // 🔹 Handle inputs
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const togglePublishToClients = (event) => {
-    const isShared = sharedEvents.some(
-      (ev) => ev.date === event.date && ev.title === event.title
-    );
-    let updatedShared;
-
-    if (isShared) {
-      updatedShared = sharedEvents.filter(
-        (ev) => !(ev.date === event.date && ev.title === event.title)
-      );
+  // 🔹 Criar/Atualizar evento
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (editingId) {
+      const updated = await updateEvent(editingId, {
+        ...form,
+        id: editingId,
+        ownerId: currentUser.id,
+      });
+      setEvents(events.map((ev) => (ev.id === editingId ? updated : ev)));
+      setEditingId(null);
     } else {
-      updatedShared = [...sharedEvents, event];
+      const newEvent = await createEvent({
+        ...form,
+        id: Date.now(),
+        ownerId: currentUser.id,
+      });
+      setEvents([...events, newEvent]);
     }
-
-    storageService.set("events_shared", updatedShared);
-    setSharedEvents(updatedShared);
+    setForm({ title: "", description: "", date: "", type: "event" });
   };
 
-  const isPublished = (event) =>
-    sharedEvents.some(
-      (ev) => ev.date === event.date && ev.title === event.title
-    );
+  // 🔹 Editar evento
+  const handleEdit = (event) => {
+    setForm(event);
+    setEditingId(event.id);
+  };
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
+  // 🔹 Deletar evento
+  const handleDelete = async (id) => {
+    await deleteEvent(id);
+    setEvents(events.filter((ev) => ev.id !== id));
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Bem-vindo, {currentUser.name}!
+    <Container sx={{ mt: 5 }}>
+      <Typography variant="h4">Dashboard</Typography>
+      <Typography variant="h6" sx={{ mt: 2 }}>
+        Olá, {currentUser?.name}!
       </Typography>
 
-      {currentUser.role === "admin" && (
-        <>
-          <Divider sx={{ my: 3 }} />
-          <Typography variant="h6" gutterBottom>
-            Adicionar Evento à Timeline
-          </Typography>
+      {/* Formulário */}
+      <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+        <TextField
+          label="Título"
+          name="title"
+          value={form.title}
+          onChange={handleChange}
+          fullWidth
+          margin="normal"
+          required
+        />
+        <TextField
+          label="Descrição"
+          name="description"
+          value={form.description}
+          onChange={handleChange}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Data"
+          name="date"
+          type="date"
+          value={form.date}
+          onChange={handleChange}
+          fullWidth
+          margin="normal"
+          InputLabelProps={{ shrink: true }}
+          required
+        />
+        <Select
+          name="type"
+          value={form.type}
+          onChange={handleChange}
+          fullWidth
+          margin="normal"
+        >
+          <MenuItem value="event">Evento</MenuItem>
+          <MenuItem value="education">Educação</MenuItem>
+          <MenuItem value="work">Trabalho</MenuItem>
+        </Select>
+        <Button type="submit" variant="contained" sx={{ mt: 2 }}>
+          {editingId ? "Atualizar" : "Adicionar"}
+        </Button>
+      </Box>
 
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Título"
-                value={newEvent.title}
-                onChange={(e) =>
-                  setNewEvent({ ...newEvent, title: e.target.value })
-                }
-              />
-            </Grid>
+      {/* Lista de eventos */}
+      <Box sx={{ mt: 4 }}>
+        <Typography variant="h5">Meus Eventos</Typography>
+        {events.map((event) => (
+          <Paper
+            key={event.id}
+            sx={{ p: 2, mt: 2, display: "flex", justifyContent: "space-between" }}
+          >
+            <Box>
+              <Typography variant="h6">{event.title}</Typography>
+              <Typography>{event.date}</Typography>
+            </Box>
+            <Box>
+              <IconButton onClick={() => handleEdit(event)}>
+                <EditIcon />
+              </IconButton>
+              <IconButton onClick={() => handleDelete(event.id)}>
+                <DeleteIcon />
+              </IconButton>
+            </Box>
+          </Paper>
+        ))}
+      </Box>
 
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Descrição"
-                value={newEvent.description}
-                onChange={(e) =>
-                  setNewEvent({ ...newEvent, description: e.target.value })
-                }
-              />
-            </Grid>
-
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                label="Data"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                value={newEvent.date}
-                onChange={(e) =>
-                  setNewEvent({ ...newEvent, date: e.target.value })
-                }
-              />
-            </Grid>
-
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                select
-                label="Tipo"
-                value={newEvent.type}
-                onChange={(e) =>
-                  setNewEvent({ ...newEvent, type: e.target.value })
-                }
-              >
-                <MenuItem value="event">Evento</MenuItem>
-                <MenuItem value="education">Educação</MenuItem>
-                <MenuItem value="work">Trabalho</MenuItem>
-              </TextField>
-            </Grid>
-
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={newEvent.public}
-                    onChange={(e) =>
-                      setNewEvent({ ...newEvent, public: e.target.checked })
-                    }
-                  />
-                }
-                label="Publicar evento"
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <Button
-                variant="contained"
-                onClick={handleAddEvent}
-                sx={{ mt: 1 }}
-              >
-                Adicionar à Timeline
-              </Button>
-            </Grid>
-          </Grid>
-
-          <Divider sx={{ my: 4 }} />
-          <Typography variant="h6" gutterBottom>
-            Publicar Eventos para Clientes
-          </Typography>
-          {allEvents.map((ev, index) => (
-            <Button
-              key={index}
-              sx={{ mr: 1, mt: 1 }}
-              variant={isPublished(ev) ? "contained" : "outlined"}
-              color={isPublished(ev) ? "success" : "primary"}
-              onClick={() => togglePublishToClients(ev)}
-            >
-              {isPublished(ev) ? "Publicado: " : "Publicar: "} {ev.title}
-            </Button>
-          ))}
-        </>
-      )}
-
-      <Divider sx={{ my: 4 }} />
-      <Typography variant="h6" gutterBottom>
-        Timeline
-      </Typography>
-
-      {visibleEvents.length > 0 ? (
-        <TimelineComponent events={visibleEvents} />
-      ) : (
-        <Typography variant="body1">Nenhum evento disponível.</Typography>
-      )}
-
-      <Button
-        variant="outlined"
-        color="error"
-        onClick={handleLogout}
-        sx={{ mt: 4 }}
-      >
-        Sair
-      </Button>
+      {/* Timeline */}
+      <Box sx={{ mt: 5 }}>
+        <Typography variant="h5">Minha Timeline</Typography>
+        <TimelineComponent events={events} />
+      </Box>
     </Container>
   );
 }

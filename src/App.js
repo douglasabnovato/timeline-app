@@ -1,25 +1,25 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import { useAuth } from "./context/AuthContext";
-import Login from "./pages/Login";
+import { Routes, Route } from "react-router-dom";
 import Register from "./pages/Register";
+import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import PrivateRoute from "./components/PrivateRoute";
+import Home from "./pages/Home";
+import NotFound from "./pages/NotFound";
 
-export default function App() {
-  const { currentUser, loading } = useAuth();
-
-  if (loading) {
-    return <div>Carregando sessão...</div>;
-  }
-
+function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login" />} />
+      <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route
-        path="/dashboard"
-        element={currentUser ? <Dashboard /> : <Navigate to="/login" />}
-      />
+      <Route path="/dashboard" element={
+        <PrivateRoute>
+          <Dashboard />
+        </PrivateRoute>
+      } />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
+
+export default App;

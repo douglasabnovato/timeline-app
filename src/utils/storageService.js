@@ -1,35 +1,12 @@
-export const storageService = {
-  get(key) {
-    try {
-      return JSON.parse(localStorage.getItem(key)) || null;
-    } catch {
-      return null;
-    }
-  },
+export const setItem = (key, value) => {
+  localStorage.setItem(key, JSON.stringify(value));
+};
 
-  set(key, value) {
-    localStorage.setItem(key, JSON.stringify(value));
-  },
+export const getItem = (key) => {
+  const value = localStorage.getItem(key);
+  return value ? JSON.parse(value) : null;
+};
 
-  remove(key) {
-    localStorage.removeItem(key);
-  },
-
-  pushToArray(key, item) {
-    const arr = storageService.get(key) || [];
-    arr.push(item);
-    storageService.set(key, arr);
-  },
-
-  updateArray(key, predicate, updater) {
-    const arr = storageService.get(key) || [];
-    const updated = arr.map((item) => (predicate(item) ? updater(item) : item));
-    storageService.set(key, updated);
-  },
-
-  removeFromArray(key, predicate) {
-    const arr = storageService.get(key) || [];
-    const filtered = arr.filter((item) => !predicate(item));
-    storageService.set(key, filtered);
-  },
+export const removeItem = (key) => {
+  localStorage.removeItem(key);
 };

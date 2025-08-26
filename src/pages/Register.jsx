@@ -1,65 +1,68 @@
 import { useState } from "react";
-import { Button, TextField, Container, Typography } from "@mui/material";
+import { Container, Typography, TextField, Button, Alert } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
-import { storageService } from "../utils/storageService";
 
 export default function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (email === "douglasabnovato.developer@gmail.com") {
-      alert("Esse email é reservado para o administrador.");
-      return;
+    try {
+      await register(form);
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.message);
     }
-
-    const users = storageService.get("users") || [];
-    if (users.find((u) => u.email === email)) {
-      alert("Email já cadastrado!");
-      return;
-    }
-
-    const newUser = {
-      id: Date.now(),
-      name,
-      email,
-      password,
-      role: "viewer"
-    };
-
-    register(newUser);
-    navigate("/dashboard");
   };
 
   return (
-    <Container maxWidth="sm">
-      <Typography variant="h4" gutterBottom>Registrar</Typography>
+    <Container sx={{ mt: 5 }}>
+      <Typography variant="h4" gutterBottom>
+        Registrar
+      </Typography>
+      {error && <Alert severity="error">{error}</Alert>}
       <form onSubmit={handleSubmit}>
-        <TextField 
-          fullWidth label="Nome" margin="normal" 
-          value={name} onChange={(e) => setName(e.target.value)} required
+        <TextField
+          label="Nome"
+          name="name"
+          fullWidth
+          margin="normal"
+          value={form.name}
+          onChange={handleChange}
+          required
         />
-        <TextField 
-          fullWidth label="Email" margin="normal" 
-          value={email} onChange={(e) => setEmail(e.target.value)} required
+        <TextField
+          label="E-mail"
+          name="email"
+          type="email"
+          fullWidth
+          margin="normal"
+          value={form.email}
+          onChange={handleChange}
+          required
         />
-        <TextField 
-          fullWidth label="Senha" type="password" margin="normal" 
-          value={password} onChange={(e) => setPassword(e.target.value)} required
+        <TextField
+          label="Senha"
+          name="password"
+          type="password"
+          fullWidth
+          margin="normal"
+          value={form.password}
+          onChange={handleChange}
+          required
         />
-        <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 }}>
+        <Button type="submit" variant="contained" sx={{ mt: 2 }}>
           Registrar
         </Button>
       </form>
-      <Typography variant="body2" sx={{ mt: 2 }}>
-        Já tem conta? <Link to="/login">Login</Link>
-      </Typography>
     </Container>
   );
 }

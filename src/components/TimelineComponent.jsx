@@ -7,38 +7,38 @@ import {
   TimelineDot,
   TimelineOppositeContent,
 } from "@mui/lab";
-import { Typography, Paper } from "@mui/material";
+import { Paper, Typography } from "@mui/material";
 import SchoolIcon from "@mui/icons-material/School";
 import WorkIcon from "@mui/icons-material/Work";
 import EventIcon from "@mui/icons-material/Event";
 
-const getIcon = (type) => {
-   switch (type) {
-    case "education":
-      return <SchoolIcon />;
-    case "work":
-      return <WorkIcon />;
-    default:
-      return <EventIcon />;
-  }
-};
-
 export default function TimelineComponent({ events }) {
+  const getIcon = (type) => {
+    switch (type) {
+      case "education":
+        return <SchoolIcon />;
+      case "work":
+        return <WorkIcon />;
+      default:
+        return <EventIcon />;
+    }
+  };
+
   return (
     <Timeline position="alternate">
-      {events.map((event, index) => (
-        <TimelineItem key={index}>
-          <TimelineOppositeContent color="text.secondary">
-            {event.date}
+      {events.map((event) => (
+        <TimelineItem key={event.id}>
+          <TimelineOppositeContent>
+            <Typography variant="body2" color="text.secondary">
+              {event.date}
+            </Typography>
           </TimelineOppositeContent>
           <TimelineSeparator>
-            <TimelineDot color="primary">
-              {getIcon(event.type)}
-            </TimelineDot>
-            {index < events.length - 1 && <TimelineConnector />}
+            <TimelineDot>{getIcon(event.type)}</TimelineDot>
+            <TimelineConnector />
           </TimelineSeparator>
           <TimelineContent>
-            <Paper elevation={3} sx={{ padding: "6px 16px" }}>
+            <Paper sx={{ p: 2 }}>
               <Typography variant="h6">{event.title}</Typography>
               <Typography>{event.description}</Typography>
             </Paper>
