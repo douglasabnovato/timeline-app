@@ -2,6 +2,8 @@
 
 Projeto de timeline da jornada profissional.
 
+[proximo passo: conferir fluxo de tela, persistencia, compartilhamento de estado]
+
 ## ✅ Recursos Implementados
 
 Recurso Status
