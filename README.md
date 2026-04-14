@@ -768,3 +768,41 @@ npm start
   - Verificar se aparecem na lista + timeline.
   - Atualizar a página (os eventos devem persistir, pois estão no db.json).
   - Editar e deletar para validar CRUD.
+
+### 📋 Plano de Ação: Desenvolvimento da Timeline App
+
+Fase 1: Infraestrutura de Acesso e Segurança
+
+- [x] src/pages/Login.jsx: Desenvolvimento da interface de login que consome a função login do seu contexto e trata erros de credenciais.
+- [x] src/pages/Register.jsx: Desenvolvimento do formulário de cadastro, garantindo que novos usuários sejam salvos no db.json via API.
+- [x] src/components/PrivateRoute.jsx: Implementação do componente que protege o Dashboard, impedindo acessos de usuários não autenticados.
+- [x] src/App.js: Configuração das rotas (BrowserRouter) e proteção das páginas privadas, unindo os componentes acima.
+
+Fase 2: O Coração da Aplicação (Timeline)
+
+- [x] src/components/TimelineComponent.jsx: Criação da visualização gráfica usando Material UI Lab, tornando-a capaz de renderizar diferentes tipos de ícones (trabalho, estudo, etc.).
+- [x] src/pages/Dashboard.jsx: Implementação da lógica de visualização 
+- [x] Admin: Carrega todos os eventos + Formulário de criação.
+- [x] Viewer: Carrega apenas eventos marcados como públicos.
+
+- ![Timeline 1]('./.github/Timeline-1.jpg')
+- ![Timeline 2]('./.github/Timeline-2.jpg')
+- ![Timeline 3]('./.github/Timeline-3.jpg')
+
+Fase 3: Refinamento e Funcionalidades Avançadas
+
+- [ ] src/pages/Dashboard.jsx (Refatoração): Adição das funções de Editar, Excluir e o botão Toggle (Publicar/Privado).
+- [ ] src/pages/Home.jsx: Ajuste final na página inicial para redirecionar usuários já logados diretamente para o Dashboard.
+
+
+#### 📋Testes 
+
+1. Ligue o Servidor de Dados
+- Abra um novo terminal (mantenha o do React rodando) e execute:
+- npx json-server --watch db.json --port 3001
+- Douglas Admin
+- admin@email.com
+- 123
+- Visitante-A
+- visitante-a@email.com
+- a@email

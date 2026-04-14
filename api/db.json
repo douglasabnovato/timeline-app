@@ -1,29 +1,54 @@
 {
   "events": [
     {
-      "id": 1756240865509,
+      "id": "1756240865509",
       "title": "Rocketseat ",
       "description": "Formação Fullstack",
       "date": "2019-12-30",
       "type": "education",
-      "ownerId": 1
+      "ownerId": "1",
+      "public": true
     },
     {
-      "id": 1756240997011,
-      "title": "Campus Party",
+      "id": "1756240997011",
+      "title": "Campus Party 2023",
       "description": "Apresentação de experiência",
       "date": "2023-01-31",
       "type": "event",
-      "ownerId": 1
+      "ownerId": "1"
     },
     {
-      "id": 1756241059514,
+      "id": "1756241059514",
       "title": "Análise e Desenvolvimento de Sistemas",
       "description": "Levantamento de Requisitos para o desenvolvimento",
       "date": "2018-06-26",
       "type": "work",
-      "ownerId": 1
+      "ownerId": "1"
+    },
+    {
+      "title": "Pós Em Engenharia de Software",
+      "description": "Formação em Engenharia de Software na Instituição XP Educação",
+      "date": "2026-04-06",
+      "type": "education",
+      "public": true,
+      "ownerId": "1",
+      "id": "1776127645533"
     }
   ],
-  "users": []
+  "users": [
+    {
+      "id": "1",
+      "name": "Douglas Admin",
+      "email": "admin@email.com",
+      "password": "123",
+      "role": "admin"
+    },
+    {
+      "id": 1776125032567,
+      "name": "Visitante-A",
+      "email": "visitante-a@email.com",
+      "password": "a@email",
+      "role": "viewer"
+    }
+  ]
 }

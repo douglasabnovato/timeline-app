@@ -24,3 +24,24 @@ export const updateEvent = async (id, updatedEvent) => {
 export const deleteEvent = async (id) => {
   await axios.delete(`${API_URL}/${id}`);
 };
+
+// 🚀 A MÁGICA PARA RESOLVER O ERRO:
+// Criamos um objeto que agrupa tudo e o exportamos como 'eventService'
+export const eventService = {
+  create: createEvent,
+  update: updateEvent,
+  delete: deleteEvent,
+  // Para o Admin: Busca todos e o Dashboard filtra por ownerId se necessário
+  getByOwner: async (ownerId) => {
+    const all = await getEvents();
+    return all.filter((e) => e.ownerId === ownerId);
+  },
+  // Para o Viewer: Busca apenas os que são públicos
+  getPublic: async () => {
+    const all = await getEvents();
+    // Filtra apenas onde public é true (booleano) ou a string "true"
+    return all.filter(
+      (event) => event.public === true || event.public === "true",
+    );
+  },
+};
