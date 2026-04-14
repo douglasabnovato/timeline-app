@@ -785,9 +785,9 @@ Fase 2: O Coração da Aplicação (Timeline)
 - [x] Admin: Carrega todos os eventos + Formulário de criação.
 - [x] Viewer: Carrega apenas eventos marcados como públicos.
 
-- ![Timeline 1]('./.github/Timeline-1.jpg')
-- ![Timeline 2]('./.github/Timeline-2.jpg')
-- ![Timeline 3]('./.github/Timeline-3.jpg')
+- ![Dashboard Admin](.github/Timeline-1.jpg)
+- ![Timeline View](.github/Timeline-2.jpg)
+- ![Mobile View](.github/Timeline-3.jpg)
 
 Fase 3: Refinamento e Funcionalidades Avançadas
 
