@@ -785,24 +785,34 @@ Fase 2: O Coração da Aplicação (Timeline)
 - [x] Admin: Carrega todos os eventos + Formulário de criação.
 - [x] Viewer: Carrega apenas eventos marcados como públicos.
 
+- ![Minha Jornada](.github/Timeline.jpg)
 - ![Dashboard Admin](.github/Timeline-1.jpg)
 - ![Timeline View](.github/Timeline-2.jpg)
 - ![Mobile View](.github/Timeline-3.jpg)
 
 Fase 3: Refinamento e Funcionalidades Avançadas
 
-- [ ] src/pages/Dashboard.jsx (Refatoração): Adição das funções de Editar, Excluir e o botão Toggle (Publicar/Privado).
-- [ ] src/pages/Home.jsx: Ajuste final na página inicial para redirecionar usuários já logados diretamente para o Dashboard.
-
+- [x] src/pages/Dashboard.jsx (Refatoração): Adição das funções de Editar, Excluir e o botão Toggle (Publicar/Privado).
+- [x] src/pages/Home.jsx: Ajuste final na página inicial para redirecionar usuários já logados diretamente para o Dashboard.
 
 #### 📋Testes 
 
 1. Ligue o Servidor de Dados
 - Abra um novo terminal (mantenha o do React rodando) e execute:
 - npx json-server --watch db.json --port 3001
+
+2. User Admin
 - Douglas Admin
 - admin@email.com
 - 123
+
+3. User Visitante
 - Visitante-A
 - visitante-a@email.com
 - a@email
+
+### 📋 QA
+
+- Padding nas páginas
+
+@douglasabnovato

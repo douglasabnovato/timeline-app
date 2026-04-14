@@ -8,12 +8,14 @@ import {
   Alert,
   Paper,
   Grid,
+  IconButton,
+  alpha,
 } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const Register = () => {
-  // 1. Estados para o formulário
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -25,7 +27,6 @@ const Register = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  // 2. Atualização genérica de campos
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -33,55 +34,117 @@ const Register = () => {
     });
   };
 
-  // 3. Submissão do cadastro
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    // Validação básica de senha no frontend
     if (formData.password !== formData.confirmPassword) {
       return setError("As senhas não coincidem.");
     }
 
     try {
-      // Enviamos apenas os dados necessários para o backend
       await register({
         name: formData.name,
         email: formData.email,
         password: formData.password,
-        role: "viewer", // Definimos como padrão, o admin criamos manualmente no db.json
+        role: "viewer",
       });
-
       navigate("/dashboard");
     } catch (err) {
       setError(err.message);
     }
   };
 
+  // Estilo reutilizável para os TextFields (Correção das Labels)
+  const textFieldStyle = {
+    "& .MuiOutlinedInput-root": {
+      color: "#fff",
+      "& fieldset": {
+        borderColor: alpha("#fff", 0.2),
+        borderRadius: "12px",
+      },
+      "&:hover fieldset": { borderColor: "#ffc107" },
+      "&.Mui-focused fieldset": { borderColor: "#ffc107" },
+    },
+    "& .MuiInputLabel-root": { color: alpha("#fff", 0.7) },
+    "& .MuiInputLabel-root.Mui-focused": { color: "#ffc107" },
+    "& .MuiInputLabel-root.MuiInputLabel-shrink": {
+      backgroundColor: "#161616", // Ajustado para o fundo do Paper
+      padding: "0 8px",
+      marginLeft: "-4px",
+    },
+  };
+
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background:
+          "radial-gradient(circle at 50% 50%, #1a237e 0%, #0a0a0a 100%)",
+        backgroundColor: "#0a0a0a",
+        py: 4,
+      }}
+    >
+      <IconButton
+        onClick={() => navigate("/")}
         sx={{
-          marginTop: 8,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          position: "absolute",
+          top: 20,
+          left: 20,
+          color: "#fff",
+          backgroundColor: alpha("#fff", 0.1),
+          "&:hover": { backgroundColor: alpha("#fff", 0.2) },
         }}
       >
-        <Paper elevation={3} sx={{ p: 4, width: "100%", borderRadius: 2 }}>
-          <Typography component="h1" variant="h5" align="center" gutterBottom>
+        <ArrowBackIcon />
+      </IconButton>
+
+      <Container component="main" maxWidth="xs">
+        <Paper
+          elevation={24}
+          sx={{
+            p: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            borderRadius: 4,
+            bgcolor: alpha("#121212", 0.8),
+            backdropFilter: "blur(10px)",
+            border: `1px solid ${alpha("#fff", 0.1)}`,
+            color: "#fff",
+          }}
+        >
+          <Typography
+            component="h1"
+            variant="h4"
+            sx={{ fontWeight: 800, mb: 1 }}
+          >
             Criar Conta
+          </Typography>
+          <Typography variant="body2" sx={{ color: alpha("#fff", 0.6), mb: 3 }}>
+            Comece a mapear seu sucesso
           </Typography>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert
+              severity="error"
+              variant="filled"
+              sx={{ mb: 2, width: "100%" }}
+            >
               {error}
             </Alert>
           )}
 
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{ mt: 1, width: "100%" }}
+          >
             <Grid container spacing={2}>
-              <Grid size={12}>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   label="Nome Completo"
@@ -89,9 +152,10 @@ const Register = () => {
                   required
                   value={formData.name}
                   onChange={handleChange}
+                  sx={textFieldStyle}
                 />
               </Grid>
-              <Grid size={12}>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   label="E-mail"
@@ -100,9 +164,10 @@ const Register = () => {
                   required
                   value={formData.email}
                   onChange={handleChange}
+                  sx={textFieldStyle}
                 />
               </Grid>
-              <Grid size={12}>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   label="Senha"
@@ -111,9 +176,10 @@ const Register = () => {
                   required
                   value={formData.password}
                   onChange={handleChange}
+                  sx={textFieldStyle}
                 />
               </Grid>
-              <Grid size={12}>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   label="Confirmar Senha"
@@ -122,6 +188,7 @@ const Register = () => {
                   required
                   value={formData.confirmPassword}
                   onChange={handleChange}
+                  sx={textFieldStyle}
                 />
               </Grid>
             </Grid>
@@ -130,17 +197,30 @@ const Register = () => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2, py: 1.2 }}
+              sx={{
+                mt: 4,
+                mb: 2,
+                py: 1.5,
+                fontWeight: "bold",
+                backgroundColor: "#ffc107",
+                color: "#000",
+                borderRadius: "50px",
+                "&:hover": { backgroundColor: "#e6af00" },
+              }}
             >
-              Registar
+              Registrar agora
             </Button>
 
-            <Box sx={{ textAlign: "center" }}>
-              <Typography variant="body2">
+            <Box sx={{ textAlign: "center", mt: 2 }}>
+              <Typography variant="body2" sx={{ color: alpha("#fff", 0.6) }}>
                 Já tem uma conta?{" "}
                 <Link
                   to="/login"
-                  style={{ textDecoration: "none", color: "#1976d2" }}
+                  style={{
+                    textDecoration: "none",
+                    color: "#ffc107",
+                    fontWeight: "bold",
+                  }}
                 >
                   Faça login
                 </Link>
@@ -148,8 +228,8 @@ const Register = () => {
             </Box>
           </Box>
         </Paper>
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 
